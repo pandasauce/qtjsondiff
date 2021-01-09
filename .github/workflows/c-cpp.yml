@@ -24,7 +24,7 @@ jobs:
     - name: setup qt env
       run: |
         ls -l /opt/qt*/bin/qt*-env.sh
-        source /opt/qt*/bin/qt*-env.sh
+        source /opt/qt*/bin/qt*-env.sh || true
     - name: qmake
       run: qmake
     - name: make

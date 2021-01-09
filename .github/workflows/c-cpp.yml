@@ -25,6 +25,7 @@ jobs:
       run: |
         ls -l /opt/qt*/bin/qt*-env.sh
         source /opt/qt*/bin/qt*-env.sh || true
+        qmake
     - name: qmake
       run: |
         which qmake-qt5

@@ -18,6 +18,7 @@ jobs:
     - name: buid
       run: |
         chmod 777 MAC_build_RELEASE.sh
+        ./MAC_build_RELEASE.sh
         echo "::set-output name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')"
       id: build
     - name: Create Release
@@ -28,7 +29,7 @@ jobs:
       with:
 #        tag_name: ${{ github.ref }}
 #        release_name: Release CI ${{ github.ref }}
-        tag_name: ${{ steps.build.outputs.VER_TAG_NAME }}
+        tag_name: ${{ github.ref }}
         release_name: Release CI OSX ${{ steps.build.outputs.VER_TAG_NAME }}  
         draft: false
         prerelease: false

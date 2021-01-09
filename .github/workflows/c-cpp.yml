@@ -22,7 +22,9 @@ jobs:
     - name: install qt
       run:  sudo apt-get -y install qt511base libgl1-mesa-dev
     - name: setup qt env
-      run: source /opt/qt*/bin/qt*-env.sh
+      run: |
+        ls -l /opt/qt*/bin/qt*-env.sh
+        source /opt/qt*/bin/qt*-env.sh
     - name: qmake
       run: qmake
     - name: make

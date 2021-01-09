@@ -24,6 +24,7 @@ jobs:
     - name: build
       run: |
         source /opt/qt*/bin/qt*-env.sh || true
+        echo ::set-env name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')
         qmake CONFIG+=release PREFIX=/usr
         make -j$(nproc)
         mkdir -p appdir/usr/bin
@@ -35,6 +36,7 @@ jobs:
         wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
         chmod a+x linuxdeployqt-continuous-x86_64.AppImage
         ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
+        cp ./Qt_JSON_diff*.AppImage ./Qt_JSON_diff.AppImage
         ls -l
     - name: Create Release
       id: create_release
@@ -42,8 +44,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release CI ${{ github.ref }}
+#        tag_name: ${{ github.ref }}
+#        release_name: Release CI ${{ github.ref }}
+        tag_name: ${{ env.TAG_NAME }}
+        release_name: Release CI ${{ env.TAG_NAME }}  
         draft: false
         prerelease: false
     - name: Upload Release Asset
@@ -53,6 +57,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./Qt_JSON_diff-9e1a6b4-x86_64.AppImage
-        asset_name: Qt_JSON_diff-9e1a6b4-x86_64.AppImage
+        asset_path: ./Qt_JSON_diff.AppImage
+        asset_name: Qt_JSON_diff-${{ env.TAG_NAME }}-x86_64.AppImage
         asset_content_type: application/octet-stream

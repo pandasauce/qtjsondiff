@@ -20,9 +20,9 @@ jobs:
         sudo add-apt-repository ppa:beineri/opt-qt-5.11.1-xenial -y
         sudo apt-get update -qq
     - name: install qt
-      run: |
-        sudo apt-get -y install qt511base libgl1-mesa-dev
-        source /opt/qt*/bin/qt*-env.sh   
+      run:  sudo apt-get -y install qt511base libgl1-mesa-dev
+    - name: setup qt env
+      run: source /opt/qt*/bin/qt*-env.sh
     - name: qmake
       run: qmake
     - name: make

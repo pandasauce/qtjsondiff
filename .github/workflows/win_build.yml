@@ -27,24 +27,26 @@ jobs:
         # Update MSYS2 installation through pacman
         #update: # optional
         # Install packages after installation through pacman
-        install: >-
-          mingw-w64-x86_64-toolchain
-          base-devel
-          git
-          p7zip
-          ruby 
-          mingw-w64-x86_64-qt5
-          mingw-w64-i686-qt5
-          mingw-w64-i686-toolchain
-          mingw-w64-i686-qwt-qt5
-          mingw-w64-x86_64-zlib
-          mingw-w64-i686-zlib
-          zlib-devel
-          mingw-w64-x86_64-openssl
-          mingw-w64-i686-openssl
-          openssl-devel
+        #install: >-
+        #  mingw-w64-x86_64-toolchain
+        #  base-devel
+        #  git
+        #  p7zip
+        #  ruby 
+        #  mingw-w64-x86_64-qt5
+        #  mingw-w64-i686-qt5
+        #  mingw-w64-i686-toolchain
+        #  mingw-w64-i686-qwt-qt5
+        #  mingw-w64-x86_64-zlib
+        #  mingw-w64-i686-zlib
+        #  zlib-devel
+        #  mingw-w64-x86_64-openssl
+        #  mingw-w64-i686-openssl
+        #  openssl-devel
     - name: get app version
-      run: echo "::set-output name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')"
+      run: |
+        echo "::set-output name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')"
+        pacman -S --noconfirm mingw-w64-x86_64-toolchain base-devel git p7zip ruby mingw-w64-x86_64-qt5 mingw-w64-i686-qt5 mingw-w64-i686-toolchain mingw-w64-i686-qwt-qt5 mingw-w64-x86_64-zlib mingw-w64-i686-zlib zlib-devel mingw-w64-x86_64-openssl mingw-w64-i686-openssl openssl-devel
       id: build
     - name: make 64
       run: |

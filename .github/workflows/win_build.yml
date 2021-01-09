@@ -1,0 +1,94 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        # Variant of the environment to set by default: MSYS, MINGW32 or MINGW64
+        msystem: MSYS
+        # Default value for MSYS2_PATH_TYPE environment variable: strict, inherit or minimal
+        #path-type: # optional, default is minimal
+        # Retrieve and extract base installation from upstream GitHub Releases
+        #release: # optional, default is true
+        # Update MSYS2 installation through pacman
+        #update: # optional
+        # Install packages after installation through pacman
+        install: >-
+          mingw-w64-x86_64-toolchain
+          base-devel
+          git
+          wget
+          p7zip
+          perl
+          ruby 
+          mingw-w64-x86_64-qt5
+          mingw-w64-i686-qt5
+          mingw-w64-i686-toolchain
+          mingw-w64-i686-qwt-qt5
+          mingw-w64-x86_64-zlib
+          mingw-w64-i686-zlib
+          zlib-devel
+          mingw-w64-x86_64-openssl
+          mingw-w64-i686-openssl
+          openssl-devel
+    - name: get app version
+      run: echo "::set-output name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')"
+      id: build
+    - name: make 64
+      run: |
+        set MSYSTEM=MINGW64
+        qmake
+        make
+        rm -f release/*.o; rm -f release/*.cpp; rm -f release/*.h
+        windeployqt.exe release/QTjsonDiff.exe
+        cp /c/tools/msys64/mingw64/bin/zlib*.dll release/; cp /c/tools/msys64/mingw64/bin/libgcc*.dll release/; cp /c/tools/msys64/mingw64/bin/libwinpthread*.dll release/; cp /c/tools/msys64/mingw64/bin/libstdc*.dll release/; cp /c/tools/msys64/mingw64/bin/libdouble*.dll release/; cp /c/tools/msys64/mingw64/bin/libicuin6*.dll release/; cp /c/tools/msys64/mingw64/bin/libicuuc6*.dll release/; cp /c/tools/msys64/mingw64/bin/libicudt6*.dll release/; cp /c/tools/msys64/mingw64/bin/libpcre*.dll release/; cp /c/tools/msys64/mingw64/bin/libzstd*.dll release/; cp /c/tools/msys64/mingw64/bin/libharfbuzz*.dll release/; cp /c/tools/msys64/mingw64/bin/libgraphite*.dll release/; cp /c/tools/msys64/mingw64/bin/libfreetype*.dll release/; cp /c/tools/msys64/mingw64/bin/libbrotlidec*.dll release/; cp /c/tools/msys64/mingw64/bin/libbrotlicommon*.dll release/; cp /c/tools/msys64/mingw64/bin/libbz*.dll release/; cp /c/tools/msys64/mingw64/bin/libpng*.dll release/; cp /c/tools/msys64/mingw64/bin/libglib*.dll release/; cp /c/tools/msys64/mingw64/bin/libintl*.dll release/; cp /c/tools/msys64/mingw64/bin/libiconv*.dll release/; cp /c/tools/msys64/mingw64/bin/libpcre*.dll release/
+        cp /c/tools/msys64/mingw64/bin/libcrypto*.dll release/; cp /c/tools/msys64/mingw64/bin/libssl*.dll release/
+        mv release QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN64; 7z -tzip a QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN64.zip ./QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN64/
+        make clean
+        ls -l
+    - name: make 32
+      run: |
+        set MSYSTEM=MINGW32
+        qmake
+        make
+        rm -f release/*.o; rm -f release/*.cpp; rm -f release/*.h;
+        windeployqt.exe release/QTjsonDiff.exe
+        cp /c/tools/msys64/mingw32/bin/zlib*.dll release/; cp /c/tools/msys64/mingw32/bin/libgcc*.dll release/; cp /c/tools/msys64/mingw32/bin/libwinpthread*.dll release/; cp /c/tools/msys64/mingw32/bin/libstdc*.dll release/; cp /c/tools/msys64/mingw32/bin/libdouble*.dll release/; cp /c/tools/msys64/mingw32/bin/libicuin6*.dll release/; cp /c/tools/msys64/mingw32/bin/libicuuc6*.dll release/; cp /c/tools/msys64/mingw32/bin/libicudt6*.dll release/; cp /c/tools/msys64/mingw32/bin/libpcre*.dll release/; cp /c/tools/msys64/mingw32/bin/libzstd*.dll release/; cp /c/tools/msys64/mingw32/bin/libharfbuzz*.dll release/; cp /c/tools/msys64/mingw32/bin/libgraphite*.dll release/; cp /c/tools/msys64/mingw32/bin/libfreetype*.dll release/; cp /c/tools/msys64/mingw32/bin/libbrotlidec*.dll release/; cp /c/tools/msys64/mingw32/bin/libbrotlicommon*.dll release/; cp /c/tools/msys64/mingw32/bin/libbz*.dll release/; cp /c/tools/msys64/mingw32/bin/libpng*.dll release/; cp /c/tools/msys64/mingw32/bin/libglib*.dll release/; cp /c/tools/msys64/mingw32/bin/libintl*.dll release/; cp /c/tools/msys64/mingw32/bin/libiconv*.dll release/; cp /c/tools/msys64/mingw32/bin/libpcre*.dll release/;
+        cp /c/tools/msys64/mingw32/bin/libcrypto*.dll release/; cp /c/tools/msys64/mingw32/bin/libssl*.dll release/
+        mv release QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN32; 7z -tzip a QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN32.zip ./QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN32/
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+#        tag_name: ${{ github.ref }}
+#        release_name: Release CI ${{ github.ref }}
+        tag_name: ${{ github.ref }}
+        release_name: Release CI WIN ${{ steps.build.outputs.VER_TAG_NAME }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN64.zip
+        asset_name: QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN64.zip
+        asset_content_type: application/octet-stream

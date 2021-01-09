@@ -2,7 +2,7 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ win_build ]
+    branches: [ win_build_test ]
 #  pull_request:
 #    branches: [ master ]
 

@@ -31,9 +31,7 @@ jobs:
           mingw-w64-x86_64-toolchain
           base-devel
           git
-          wget
           p7zip
-          perl
           ruby 
           mingw-w64-x86_64-qt5
           mingw-w64-i686-qt5

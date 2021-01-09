@@ -1,0 +1,45 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ osx_build_actions_test ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: install qt
+      run: brew install qt5
+    - name: buid
+      run: |
+        chmod 777 MAC_build_RELEASE.sh
+        echo "::set-output name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')"
+      id: build
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+#        tag_name: ${{ github.ref }}
+#        release_name: Release CI ${{ github.ref }}
+        tag_name: ${{ steps.build.outputs.VER_TAG_NAME }}
+        release_name: Release CI OSX ${{ steps.build.outputs.VER_TAG_NAME }}  
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./QT*.dmg
+        asset_name: QT*.dmg
+        asset_content_type: application/octet-stream
+        body: DMG OSX build

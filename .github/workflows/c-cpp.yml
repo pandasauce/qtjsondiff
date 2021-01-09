@@ -24,7 +24,7 @@ jobs:
     - name: build
       run: |
         source /opt/qt*/bin/qt*-env.sh || true
-        echo ::set-env name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')
+        echo "::set-output name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')"
         qmake CONFIG+=release PREFIX=/usr
         make -j$(nproc)
         mkdir -p appdir/usr/bin
@@ -38,6 +38,7 @@ jobs:
         ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
         cp ./Qt_JSON_diff*.AppImage ./Qt_JSON_diff.AppImage
         ls -l
+        id: build
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -46,8 +47,8 @@ jobs:
       with:
 #        tag_name: ${{ github.ref }}
 #        release_name: Release CI ${{ github.ref }}
-        tag_name: ${{ env.TAG_NAME }}
-        release_name: Release CI ${{ env.TAG_NAME }}  
+        tag_name: ${{ steps.build.outputs.VER_TAG_NAME }}
+        release_name: Release CI ${{ steps.build.outputs.VER_TAG_NAME }}  
         draft: false
         prerelease: false
     - name: Upload Release Asset

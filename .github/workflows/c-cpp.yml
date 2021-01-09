@@ -38,7 +38,7 @@ jobs:
         ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
         cp ./Qt_JSON_diff*.AppImage ./Qt_JSON_diff.AppImage
         ls -l
-        id: build
+      id: build
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1

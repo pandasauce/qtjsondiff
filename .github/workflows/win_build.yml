@@ -47,12 +47,14 @@ jobs:
       run: |
         echo "::set-output name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')"
       id: build
+      #D:/a/_temp/msys/msys64/mingw64/bin/qmake.exe
     - name: make 64
       run: |
         ls -l
         pwd
-        export PATH=/d/a/_temp/msys/mingw64/bin:$PATH
         set MSYSTEM=MINGW64
+        export PATH=/d/a/_temp/msys/mingw64/bin:$PATH
+        ls -l /d/a/_temp/msys/msys64/mingw64/bin/qmake.exe
         qmake
         make
         rm -f release/*.o; rm -f release/*.cpp; rm -f release/*.h

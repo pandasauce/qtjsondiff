@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: msys2 {0}
+        shell: msys2 -full-path -here {0}
     steps:
     - uses: actions/checkout@v2
     - name: Setup MSYS2
@@ -53,7 +53,9 @@ jobs:
         ls -l
         pwd
         set MSYSTEM=MINGW64
+        echo $PATH
         export PATH=/d/a/_temp/msys/mingw64/bin:$PATH
+        echo $PATH
         ls -l /d/a/_temp/msys/msys64/mingw64/bin/qmake.exe
         qmake
         make

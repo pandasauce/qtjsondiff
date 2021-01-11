@@ -46,12 +46,13 @@ jobs:
     - name: get app version
       run: |
         echo "::set-output name=VER_TAG_NAME::$(cat main.cpp |grep 'const QString APP'|awk -F\" '{print $2;}')"
-#        pacman -S --needed --noconfirm mingw-w64-x86_64-toolchain base-devel git p7zip ruby mingw-w64-x86_64-qt5 mingw-w64-i686-qt5 mingw-w64-i686-toolchain mingw-w64-i686-qwt-qt5 mingw-w64-x86_64-zlib mingw-w64-i686-zlib zlib-devel mingw-w64-x86_64-openssl mingw-w64-i686-openssl openssl-devel
       id: build
     - name: make 64
       run: |
+        export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
+        export PATH=/d/a/_temp/msys/mingw64/bin:$PATH
         set MSYSTEM=MINGW64
-        qmake
+        $mingw64 qmake
         make
         rm -f release/*.o; rm -f release/*.cpp; rm -f release/*.h
         windeployqt.exe release/QTjsonDiff.exe

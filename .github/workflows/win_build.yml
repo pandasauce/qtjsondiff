@@ -49,10 +49,11 @@ jobs:
       id: build
     - name: make 64
       run: |
-        export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
+        ls -l
+        pwd
         export PATH=/d/a/_temp/msys/mingw64/bin:$PATH
         set MSYSTEM=MINGW64
-        $mingw64 qmake
+        qmake
         make
         rm -f release/*.o; rm -f release/*.cpp; rm -f release/*.h
         windeployqt.exe release/QTjsonDiff.exe

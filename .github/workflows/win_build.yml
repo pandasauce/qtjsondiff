@@ -54,7 +54,7 @@ jobs:
         pwd
         set MSYSTEM=MINGW64
         echo $PATH
-        export PATH=/d/a/_temp/msys/mingw64/bin:$PATH
+        export PATH=/d/a/_temp/msys/msys64/mingw64/bin:$PATH
         echo $PATH
         ls -l /d/a/_temp/msys/msys64/mingw64/bin/qmake.exe
         qmake

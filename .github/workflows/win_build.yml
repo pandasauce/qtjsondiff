@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: msys2 -full-path -here {0}
+        shell: msys2 {0}
     steps:
     - uses: actions/checkout@v2
     - name: Setup MSYS2

@@ -32,7 +32,7 @@ jobs:
           base-devel
           git
           p7zip
-          ruby 
+          ruby
           mingw-w64-x86_64-qt5
           mingw-w64-i686-qt5
           mingw-w64-i686-toolchain

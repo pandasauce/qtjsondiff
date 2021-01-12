@@ -85,11 +85,11 @@ jobs:
 #        tag_name: ${{ github.ref }}
 #        release_name: Release CI ${{ github.ref }}
         tag_name: ${{ github.ref }}
-        release_name: Release CI WIN ${{ steps.build.outputs.VER_TAG_NAME }}
+        release_name: Release CI WIN ${{ steps.build.outputs.VER_TAG_NAME }} ${{ github.ref }}
         draft: false
         prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
+    - name: Upload Release Asset Win64
+      id: upload-release-asset-win64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -97,4 +97,14 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN64.zip
         asset_name: QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN64.zip
+        asset_content_type: application/octet-stream
+    - name: Upload Release Asset Win32
+      id: upload-release-asset-win32
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN32.zip
+        asset_name: QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}_WIN32.zip
         asset_content_type: application/octet-stream

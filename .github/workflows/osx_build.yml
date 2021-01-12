@@ -30,11 +30,11 @@ jobs:
 #        tag_name: ${{ github.ref }}
 #        release_name: Release CI ${{ github.ref }}
         tag_name: ${{ github.ref }}
-        release_name: Release CI OSX ${{ steps.build.outputs.VER_TAG_NAME }}
+        release_name: Release CI OSX ${{ steps.build.outputs.VER_TAG_NAME }} ${{ github.ref }}
         draft: false
         prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
+    - name: Upload Release Asset dmg
+      id: upload-release-asset-dmg
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,3 +44,15 @@ jobs:
         asset_name: QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}.dmg
         asset_content_type: application/octet-stream
         body: DMG OSX build
+    - name: Upload Release Asset zip
+      id: upload-release-asset-zip
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}.zip
+        asset_name: QTjsonDiff_${{ steps.build.outputs.VER_TAG_NAME }}.zip
+        asset_content_type: application/octet-stream
+        body: DMG OSX build
+        
